@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="BiSoft.Consultorio.Dominio/BiSoft.Consultorio.Dominio.csproj" />
+  <Project Path="BiSoft.Consultorio.Tests/BiSoft.Consultorio.Tests.csproj" />
+</Solution>
