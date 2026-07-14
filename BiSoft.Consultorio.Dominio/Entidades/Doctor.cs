@@ -1,25 +1,23 @@
 ﻿
+using BiSoft.Consultorio.Dominio.Entidades.Base;
 using BiSoft.Consultorio.Dominio.Validators.Entidades;
 using System;
 using System.Globalization;
 
 namespace BiSoft.Consultorio.Dominio.Entidades
 {
-    public class Doctor
+    public class Doctor : Persona
     {
-        public Guid Id { get; }
-        public string Nombre { get; private set; }
         public string Especialidad { get; private set; }
-        private Doctor() { }
+        private Doctor() : base() { }
         public Doctor(string nombre, string especialidad)
+            : base(nombre)
         {
-            Id = Guid.NewGuid();
-            Nombre = nombre.ValidateNombre();
-            Especialidad = especialidad;
+            Especialidad = especialidad.ValidateEspecialidad();
         }
         public void Actualizar(string nombre, string especialidad) 
         {
-            Nombre = nombre.ValidateNombre();
+            Actualizar(nombre);
             Especialidad = especialidad.ValidateEspecialidad();
         }
     }

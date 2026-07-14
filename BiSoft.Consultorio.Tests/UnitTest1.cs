@@ -46,5 +46,17 @@ namespace BiSoft.Consultorio.Tests
             Assert.Equal("Ejemplo Si", doctor.Nombre);
             Assert.Equal("Pediatría", doctor.Especialidad);
         }
+
+        [Fact]
+        public void Actualizar()
+        {
+            //Arrange
+            var doctor = new Doctor("Juan Perez", "Cardiologia");
+            //act
+            doctor.Actualizar("Ejemplo Si", "Pediatría");
+            //Assert
+            Assert.Equal("Ejemplo Si", doctor.Nombre);
+            Assert.Equal("Pediatría", doctor.Especialidad);
+        }
     }
 }
