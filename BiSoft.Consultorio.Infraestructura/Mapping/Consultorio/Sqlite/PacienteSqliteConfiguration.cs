@@ -15,12 +15,12 @@ namespace BiSoft.Consultorio.Infraestructura.Mapping.Consultorio.Sqlite
                 .HasKey(p => p.Id);
             builder.Property(p => p.Id)
                 .HasColumnName("id")
-                .HasColumnType("UNIQUEIDENTIFIER")
+                .HasColumnType("TEXT")
                 .HasMaxLength(100)
                 .IsRequired();
             builder.Property(p => p.Nombre)
                 .HasColumnName("nombre")
-                .HasColumnType("NVARCHAR")
+                .HasColumnType("TEXT")
                 .IsRequired()
                 .HasMaxLength(100);
         }

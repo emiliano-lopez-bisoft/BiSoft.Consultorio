@@ -15,17 +15,17 @@ namespace BiSoft.Consultorio.Infraestructura.Mapping.Consultorio.Sqlite
                 .HasKey(d => d.Id);
             builder.Property(d => d.Id)
                 .HasColumnName("id")
-                .HasColumnType("UNIQUEIDENTIFIER")
+                .HasColumnType("TEXT")
                 .HasMaxLength(100)
                 .IsRequired();
             builder.Property(d => d.Nombre)
                 .HasColumnName("nombre")
-                .HasColumnType("NVARCHAR")
+                .HasColumnType("TEXT")
                 .IsRequired()
                 .HasMaxLength(100);
             builder.Property(d => d.Especialidad)
                 .HasColumnName("especialidad")
-                .HasColumnType("NVARCHAR")
+                .HasColumnType("TEXT")
                 .IsRequired()
                 .HasMaxLength(100);
         }

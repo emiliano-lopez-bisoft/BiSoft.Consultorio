@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="BiSoft.Consultorio.Api/BiSoft.Consultorio.Api.csproj" Id="61d8f2a6-bc49-44ca-85c4-1871325e48a9" />
   <Project Path="BiSoft.Consultorio.Aplicacion/BiSoft.Consultorio.Aplicacion.csproj" Id="f16d4dbe-4d3d-43ed-a4e0-dc6ad6ad579e" />
   <Project Path="BiSoft.Consultorio.Dominio/BiSoft.Consultorio.Dominio.csproj" />
   <Project Path="BiSoft.Consultorio.Infraestructura/BiSoft.Consultorio.Infraestructura.csproj" Id="17d2b89e-ea77-4921-9bb0-ead285d924e9" />

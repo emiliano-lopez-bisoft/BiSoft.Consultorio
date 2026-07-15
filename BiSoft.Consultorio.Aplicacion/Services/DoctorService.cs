@@ -1,5 +1,7 @@
-﻿using BiSoft.Consultorio.Dominio.Entidades;
+﻿using BiSoft.Consultorio.Aplicacion.DTOs.Doctor;
+using BiSoft.Consultorio.Dominio.Entidades;
 using BiSoft.Consultorio.Dominio.Services;
+using Mapster;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,27 @@ namespace BiSoft.Consultorio.Aplicacion.Services
             var doctor = await _doctorDomainService.RegistrarDoctor(nombre, especialidad);
             _logger.LogInformation("Doctor registrado: {DoctorNombre} - Especialidad: {DoctorEspecialidad}", doctor.Nombre, doctor.Especialidad);
             return doctor;
+        }
+
+        public async Task<Doctor> ActualizarDoctor(Guid doctorId, string nombre, string especialidad)
+        {
+            var doctor = await _doctorDomainService.ActualizarDoctor(doctorId, nombre, especialidad);
+            _logger.LogInformation("Doctor actualizado: {DoctorNombre} - Especialidad: {DoctorEspecialidad}", doctor.Nombre, doctor.Especialidad);
+            return doctor;
+        }
+
+        public async Task<ConsultarDoctorResponse> ConsultorDoctor(Guid doctorId)
+        {
+            var doctor = await _doctorDomainService.ObtenerDoctor(doctorId);
+            _logger.LogInformation("Doctor obtenido con id {}", doctorId);
+            return doctor.Adapt<ConsultarDoctorResponse>();
+        }
+
+        //Eliminar doctor
+        public async Task EliminarDoctor(Guid doctorId)
+        {
+            await _doctorDomainService.EliminarDoctor(doctorId);
+            _logger.LogInformation("Doctor eliminado con id {}", doctorId);
         }
     }
 }

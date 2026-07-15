@@ -11,7 +11,8 @@ namespace BiSoft.Consultorio.Dominio.Repositories
     {
         Task RegistrarPaciente(Paciente paciente);
         Task GuardarCambios();
-        Task<Paciente?> ConsultarPaciente(Guid pacienteId);
-        IQueryable<Paciente> ConsultarPaciente();
+        Task<Paciente?> ObtenerPaciente(Guid pacienteId);
+        IQueryable<Paciente> ConsultarPacientes();
+        Task EliminarPaciente(Paciente paciente);
     }
 }

@@ -58,5 +58,30 @@ namespace BiSoft.Consultorio.Tests
             Assert.Equal("Ejemplo Si", doctor.Nombre);
             Assert.Equal("Pediatría", doctor.Especialidad);
         }
+
+
+        [Theory]
+        [InlineData ("JuanPerez")]
+        [InlineData("")]
+        [InlineData("An a")]
+        [InlineData("jsjskdkjdjssiueuejsjsjslaljsn ajslasnsjjsaljjaljsjajsjajsjajajsjjjaoiueijjsjsjsjsjsjiuesjs")]
+        public void IncorrectNamePaciente(string nombre)
+        {
+            //Arrange
+            //Act
+            //Assert
+            Assert.Throws<ArgumentException>(() => new Paciente(nombre));
+        }
+
+        [Fact]
+        public void ActualizarPaciente()
+        {
+            //Arrange
+            var paciente = new Paciente("Juan Perez");
+            //Act
+            paciente.Actualizar("Ejemplo Si");
+            //Assert
+            Assert.Equal("Ejemplo Si", paciente.Nombre);
+        }
     }
 }

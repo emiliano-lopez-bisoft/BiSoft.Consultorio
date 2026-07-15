@@ -36,16 +36,23 @@ namespace BiSoft.Consultorio.Dominio.Services
         }
         public async Task<Paciente> ObtenerPaciente(Guid pacienteId)
         {
-            var paciente = await _pacienteRepository.ConsultarPaciente(pacienteId) ?? throw new Exception($"No se encontró el paciente con id {pacienteId}.");
+            var paciente = await _pacienteRepository.ObtenerPaciente(pacienteId) ?? throw new Exception($"No se encontró el paciente con id {pacienteId}.");
             _logger.LogInformation("Paciente obtenido: {PacienteNombre}", paciente.Nombre);
             return paciente;
         }
 
         public IQueryable<Paciente> ConsultarPacientes()
         {
-            var pacientes = _pacienteRepository.ConsultarPaciente();
+            var pacientes = _pacienteRepository.ConsultarPacientes();
             _logger.LogInformation($"Pacientes consultados");
             return pacientes;
+        }
+        public async Task EliminarPaciente(Guid pacienteId)
+        {
+            var paciente = await ObtenerPaciente(pacienteId);
+            await _pacienteRepository.EliminarPaciente(paciente);
+            await _pacienteRepository.GuardarCambios();
+            _logger.LogInformation("Paciente eliminado: {PacienteNombre}", paciente.Nombre);
         }
     }
 }
