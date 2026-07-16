@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BiSoft.Consultorio.Dominio.Validators;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -8,5 +9,17 @@ namespace BiSoft.Consultorio.Dominio.Entidades
     {
         public Guid Id { get; set; }
         public string Nombre { get; set; }
+
+        protected Sala() { }
+        public Sala(string nombre)
+        {
+            Id = Guid.NewGuid();
+            Nombre = nombre.ValidateEmpty("nombre");
+        }
+
+        public void Actualizar(string nombre)
+        {
+            Nombre = nombre.ValidateEmpty("nombre");
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using BiSoft.Consultorio.Api.Endpoints.Doctores;
 using BiSoft.Consultorio.Api.Endpoints.Pacientes;
+using BiSoft.Consultorio.Api.Endpoints.Salas;
 using Microsoft.OpenApi;
 
 namespace BiSoft.Consultorio.Api.Extensions
@@ -11,6 +12,9 @@ namespace BiSoft.Consultorio.Api.Extensions
             var apiEndpoints = app.MapGroup("api");
             apiEndpoints.MapDoctoresEndpoints();
             apiEndpoints.MapPacientesEndpoints();
+            apiEndpoints.MapSalasEndpoints();
+            //Linea añadida
+            apiEndpoints.AddOpenApi();
             return app;
         }
         private static RouteGroupBuilder AddOpenApi(this RouteGroupBuilder group)

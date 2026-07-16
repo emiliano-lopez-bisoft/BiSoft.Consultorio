@@ -12,7 +12,7 @@ namespace BiSoft.Consultorio.Dominio.Validators
         {
             if (string.IsNullOrEmpty(value))
             {
-                throw new ArgumentException("El nombre del doctor no puede estar vacío.");
+                throw new ArgumentException($"El {fieldName} no puede estar vacío.");
             }
             return value;
         }

@@ -14,5 +14,17 @@ namespace BiSoft.Consultorio.Dominio.Entidades
         public string Diagnostico { get; set; }
         public Guid SalaId { get; set; }
         public Sala Sala { get; set; }
+
+        protected Cita() { }
+
+        public Cita(DateTime fecha, Guid pacienteId, Guid doctorId, Guid salaId, string motivo)
+        {
+            Id = Guid.NewGuid();
+            Fecha = fecha;
+            PacienteId = pacienteId;
+            DoctorId = doctorId;
+            Motivo = motivo;
+            SalaId = salaId;
+        }
     }
 }

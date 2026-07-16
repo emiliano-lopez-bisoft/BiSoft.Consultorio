@@ -15,10 +15,13 @@ namespace BiSoft.Consultorio.Api.Extensions
 
             services.AddScoped<DoctorService>();
             services.AddScoped<PacienteService>();
+            services.AddScoped<SalaService>();
             services.AddScoped<DoctorDomainService>();
             services.AddScoped<PacienteDomainService>();
+            services.AddScoped<SalaDomainService>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<IPacienteRepository, PacienteRepository>();
+            services.AddScoped<ISalaRepository, SalaRepository>();
             services.AddDbContext<ConsultorioContext>(
                 options => options.UseSqlite(connectionString)
             );
