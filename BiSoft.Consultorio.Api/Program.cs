@@ -1,13 +1,5 @@
-
-using BiSoft.Consultorio.Api.DTOs.Doctor;
-using BiSoft.Consultorio.Api.DTOs.Paciente;
-using BiSoft.Consultorio.Aplicacion.Services;
-using BiSoft.Consultorio.Dominio.Repositories;
-using BiSoft.Consultorio.Dominio.Services;
-using BiSoft.Consultorio.Infraestructura.Contexts;
-using BiSoft.Consultorio.Infraestructura.Repositories.Consultorio;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using BiSoft.Consultorio.Api.Extensions;
+using BiSoft.Consultorio.Api.Middlewares;
 using Serilog;
 
 namespace BiSoft.Consultorio.Api
@@ -19,17 +11,7 @@ namespace BiSoft.Consultorio.Api
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-                var connectionString = builder.Configuration["DataBaseConnections:Consultorio:ConnectionString"];
-
-                builder.Services.AddScoped<DoctorService>();
-                builder.Services.AddScoped<PacienteService>();
-                builder.Services.AddScoped<DoctorDomainService>();
-                builder.Services.AddScoped<PacienteDomainService>();
-                builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
-                builder.Services.AddScoped<IPacienteRepository, PacienteRepository>();
-                builder.Services.AddDbContext<ConsultorioContext>(
-                    options => options.UseSqlite(connectionString)
-                );
+                builder.Services.AddApplicationServices(builder.Configuration);
 
                 Log.Logger = new LoggerConfiguration()
                              .WriteTo.SQLite(
@@ -39,6 +21,21 @@ namespace BiSoft.Consultorio.Api
                              )
                              .CreateLogger();
                 //To do Agregar serilog
+
+                //OpenApi
+                builder.Services.AddEndpointsApiExplorer();
+                builder.Services.AddSwaggerGen();
+
+                // CORS
+                builder.Services.AddCors(options =>
+                {
+                    options.AddPolicy("AllowAll", policy =>
+                    {
+                        policy.AllowAnyOrigin()
+                              .AllowAnyMethod()
+                              .AllowAnyHeader();
+                    });
+                });
 
 
                 // Add services to the container.
@@ -54,144 +51,21 @@ namespace BiSoft.Consultorio.Api
                 {
                     app.MapOpenApi();
                 }
-
+                app.UseMiddleware<ErrorHandlerMiddleware>();
                 app.UseHttpsRedirection();
 
                 app.UseAuthorization();
 
 
-                //CRUD DOCTOR
-                app.MapGet("api/doctores/{doctorId}",
-                    async (
-                        [FromRoute] Guid doctorId,
-                        DoctorService doctorService,
-                        CancellationToken ct
-                    ) =>
-                    {
-                        try
-                        {
-                            var doctor = await doctorService.ConsultorDoctor(doctorId);
-                            return Results.Ok(doctor);
-                        }
-                        catch (KeyNotFoundException)
-                        {
-                            return Results.NotFound("No se encontró el registro");
-                        }
-                    }
-                )
-                .WithSummary("Consultar Doctor")
-                .WithName("Consultar Doctor");
+                //CRUD DOCTOR y PACIENTE
+                app.MapEndpoints();
 
-                app.MapPost("api/doctores",
-                    async (
-                        [FromBody] RegistrarDoctorRequest request,
-                        DoctorService doctorService,
-                        CancellationToken ct
-                    ) =>
-                    {
-                        var doctor = await doctorService.RegistrarDoctor(request.Nombre, request.Especialidad);
-                        return Results.Created($"api/doctores/{doctor.Id}", doctor);
-                    }
-                )
-                .WithSummary("Registrar Doctor")
-                .WithName("Registrar Doctor");
+                //OpenApi
+                app.UseSwagger();
+                app.UseSwaggerUI();
 
-                app.MapPut("api/doctores/{doctorId}",
-                    async (
-                        [FromRoute] Guid doctorId,
-                        [FromBody] ActualizarDoctorRequest request,
-                        DoctorService doctorService,
-                        CancellationToken ct
-                    ) =>
-                    {
-                       
-                        var doctor = await doctorService.ActualizarDoctor(doctorId, request.Nombre, request.Especialidad);
-                        return Results.Ok(doctor);
-                    }
-                )
-                .WithSummary("Actualizar Doctor")
-                .WithName("Actualizar Doctor");
-
-                app.MapDelete("api/doctores/{doctorId}",
-                    async (
-                        [FromRoute] Guid doctorId,
-                        DoctorService doctorService,
-                        CancellationToken ct
-                    ) =>
-                    {
-                        await doctorService.EliminarDoctor(doctorId);
-                        return Results.NoContent();
-                    }
-                )
-                .WithSummary("Eliminar Doctor")
-                .WithName("Eliminar Doctor");
-
-
-                //CRUD PACIENTE
-                app.MapGet("api/pacientes/{pacienteId}",
-                    async (
-                        [FromRoute] Guid pacienteId,
-                        PacienteService pacienteService,
-                        CancellationToken ct
-                    ) =>
-                    {
-                        try
-                        {
-                            var paciente = await pacienteService.ConsultorPaciente(pacienteId);
-                            return Results.Ok(paciente);
-                        }
-                        catch (KeyNotFoundException)
-                        {
-                            return Results.NotFound("No se encontró el registro");
-                        }
-                    }
-                )
-                .WithSummary("Consultar Paciente")
-                .WithName("Consultar Paciente");
-
-                app.MapPost("api/pacientes",
-                    async (
-                        [FromBody] RegistrarPacienteRequest request,
-                        PacienteService pacienteService,
-                        CancellationToken ct
-                    ) =>
-                    {
-                        var paciente = await pacienteService.RegistrarPaciente(request.Nombre);
-                        return Results.Created($"api/pacientes/{paciente.Id}", paciente);
-                    }
-                )
-                .WithSummary("Registrar Paciente")
-                .WithName("Registrar Paciente");
-
-                app.MapPut("api/pacientes/{pacienteId}",
-                    async (
-                        [FromRoute] Guid pacienteId,
-                        [FromBody] ActualizarPacienteRequest request,
-                        PacienteService pacienteService,
-                        CancellationToken ct
-                    ) =>
-                    {
-
-                        var paciente = await pacienteService.ActualizarPaciente(pacienteId, request.Nombre);
-                        return Results.Ok(paciente);
-                    }
-                )
-                .WithSummary("Actualizar Paciente")
-                .WithName("Actualizar Paciente");
-
-                app.MapDelete("api/pacientes/{pacienteId}",
-                    async (
-                        [FromRoute] Guid pacienteId,
-                        PacienteService pacienteService,
-                        CancellationToken ct
-                    ) =>
-                    {
-                        await pacienteService.EliminarPaciente(pacienteId);
-                        return Results.NoContent();
-                    }
-                )
-                .WithSummary("Eliminar Paciente")
-                .WithName("Eliminar Paciente");
+                //Cors 
+                app.UseCors("AllowAll");
 
                 app.Run();
             }

@@ -34,7 +34,7 @@ namespace BiSoft.Consultorio.Aplicacion.Services
             return doctor;
         }
 
-        public async Task<ConsultarDoctorResponse> ConsultorDoctor(Guid doctorId)
+        public async Task<ConsultarDoctorResponse> ConsultarDoctor(Guid doctorId)
         {
             var doctor = await _doctorDomainService.ObtenerDoctor(doctorId);
             _logger.LogInformation("Doctor obtenido con id {}", doctorId);
