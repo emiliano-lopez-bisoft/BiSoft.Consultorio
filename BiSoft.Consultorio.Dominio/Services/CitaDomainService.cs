@@ -67,6 +67,34 @@ namespace BiSoft.Consultorio.Dominio.Services
             _logger.LogInformation("Cita eliminada: {CitaId} - Fecha: {CitaFecha}", cita.Id, cita.Fecha);
         }
 
+        public async Task<Cita> ReagendarCita(Guid citaId, DateTime nuevaFecha)
+        {
+            var cita = await ObtenerCita(citaId);
+            if (cita.Fecha.Date <= DateTime.Now.Date)
+            {
+                throw new InvalidOperationException("Las citas no se pueden modificar el mismo día programado. Deberá cancelarse.");
+            }
+
+            // Extraemos las citas del NUEVO día para validar empalmes
+            var fechaInicioDia = nuevaFecha.Date;
+            var fechaFinDia = fechaInicioDia.AddDays(1);
+
+            // Obtenemos las citas, EXCLUYENDO la cita actual (para que no choque consigo misma si se cambia a otra hora del mismo día)
+            var citasDelDia = _citaRepository.ConsultarCitas()
+                .Where(c => c.Fecha >= fechaInicioDia && c.Fecha < fechaFinDia && c.Activo && c.Id != citaId)
+                .ToList();
+
+            // Reutilizamos la validación de negocio de 30 minutos, horarios de 6 a 18 y empalmes
+            ValidarReglasDeAgendamiento(nuevaFecha, cita.PacienteId, cita.DoctorId, cita.SalaId, citasDelDia);
+
+            // Actualizamos la entidad y guardamos
+            cita.Reagendar(nuevaFecha);
+            await _citaRepository.GuardarCambios();
+
+            _logger.LogInformation("Cita reagendada: {CitaId} - Nueva Fecha: {NuevaFecha}", cita.Id, cita.Fecha);
+            return cita;
+        }
+
         // --- MÉTODOS PRIVADOS DE VALIDACIÓN ---
         private void ValidarReglasDeAgendamiento(DateTime fecha, Guid pacienteId, Guid doctorId, Guid salaId, List<Cita> citasDelDia)
         {

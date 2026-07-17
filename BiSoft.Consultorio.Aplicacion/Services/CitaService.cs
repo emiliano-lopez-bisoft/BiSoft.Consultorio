@@ -41,5 +41,11 @@ namespace BiSoft.Consultorio.Aplicacion.Services
             await _citaDomainService.EliminarCita(citaId);
             _logger.LogInformation("Cita eliminada con id {CitaId}", citaId);
         }
+
+        public async Task<ConsultarCitaResponse> ReagendarCita(Guid citaId, DateTime nuevaFecha)
+        {
+            var cita = await _citaDomainService.ReagendarCita(citaId, nuevaFecha);
+            return cita.Adapt<ConsultarCitaResponse>();
+        }
     }
 }

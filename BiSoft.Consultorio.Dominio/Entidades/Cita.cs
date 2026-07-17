@@ -28,6 +28,18 @@ namespace BiSoft.Consultorio.Dominio.Entidades
             SalaId = salaId;
         }
 
-        public void Desactivar() { Activo = false; }
+        public void Desactivar() 
+        { 
+            Activo = false; 
+        }
+
+        public void Reagendar(DateTime nuevaFecha)
+        {
+            if(nuevaFecha < DateTime.Now)
+            {
+                throw new ArgumentException("No se puede reagendar una cita hacia el pasado.");
+            }
+            Fecha = nuevaFecha;
+        }
     }
 }
