@@ -37,7 +37,8 @@ namespace BiSoft.Consultorio.Infraestructura.Repositories.Consultorio
 
         public async Task EliminarPaciente(Paciente paciente)
         {
-            _context.Pacientes.Remove(paciente);
+            paciente.Desactivar();
+            _context.Pacientes.Update(paciente);
         }
     }
 }

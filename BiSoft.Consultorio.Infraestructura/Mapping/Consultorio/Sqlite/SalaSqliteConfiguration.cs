@@ -12,17 +12,21 @@ namespace BiSoft.Consultorio.Infraestructura.Mapping.Consultorio.Sqlite
         public void Configure(EntityTypeBuilder<Sala> builder)
         {
             builder.ToTable("Salas")
-                .HasKey(p => p.Id);
-            builder.Property(p => p.Id)
+                .HasKey(s => s.Id);
+            builder.Property(s => s.Id)
                 .HasColumnName("id")
                 .HasColumnType("TEXT")
                 .HasMaxLength(100)
                 .IsRequired();
-            builder.Property(p => p.Nombre)
+            builder.Property(s => s.Nombre)
                 .HasColumnName("nombre")
                 .HasColumnType("TEXT")
                 .IsRequired()
                 .HasMaxLength(100);
+            builder.Property(s => s.Activo)
+                .HasColumnName("activo")
+                .HasColumnType("INTEGER")
+                .IsRequired();
         }
     }
 }

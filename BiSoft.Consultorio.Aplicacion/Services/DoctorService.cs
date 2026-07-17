@@ -41,7 +41,6 @@ namespace BiSoft.Consultorio.Aplicacion.Services
             return doctor.Adapt<ConsultarDoctorResponse>();
         }
 
-        //Eliminar doctor
         public async Task EliminarDoctor(Guid doctorId)
         {
             await _doctorDomainService.EliminarDoctor(doctorId);

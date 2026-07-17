@@ -10,7 +10,7 @@ namespace BiSoft.Consultorio.Api.Endpoints.Doctores
 
         public static RouteGroupBuilder MapEliminarDoctorEndpoint(this RouteGroupBuilder group)
         {
-            group.MapDelete("api/doctores/{doctorId}",
+            group.MapDelete("{doctorId}",
                     async (
                         [FromRoute] Guid doctorId,
                         DoctorService doctorService,

@@ -8,6 +8,7 @@ namespace BiSoft.Consultorio.Dominio.Entidades.Base
     {
         public Guid Id { get; }
         public string Nombre { get; private set; }
+        public bool Activo { get; private set; } = true;
         protected Persona() { }
         protected Persona(string nombre)
         {
@@ -19,5 +20,6 @@ namespace BiSoft.Consultorio.Dominio.Entidades.Base
         {
             Nombre = nombre.ValidateNombre();
         }
+        public void Desactivar() { Activo = false; }
     }
 }

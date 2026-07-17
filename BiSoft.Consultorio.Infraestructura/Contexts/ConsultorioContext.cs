@@ -12,6 +12,7 @@ namespace BiSoft.Consultorio.Infraestructura.Contexts
         public DbSet<Doctor> Doctores { get; set; }
         public DbSet<Paciente> Pacientes { get; set; }
         public DbSet<Sala> Salas { get; set; }
+        public DbSet<Cita> Citas { get; set; }
         public ConsultorioContext(DbContextOptions<ConsultorioContext> options) : base(options)
         {
         }
@@ -20,6 +21,13 @@ namespace BiSoft.Consultorio.Infraestructura.Contexts
             modelBuilder.ApplyConfiguration(new DoctorSqliteConfiguration());
             modelBuilder.ApplyConfiguration(new PacienteSqliteConfiguration());
             modelBuilder.ApplyConfiguration(new SalaSqliteConfiguration());
+            modelBuilder.ApplyConfiguration(new CitaSqliteConfiguration());
+
+            modelBuilder.Entity<Doctor>().HasQueryFilter(d => d.Activo);
+            modelBuilder.Entity<Paciente>().HasQueryFilter(p => p.Activo);
+            modelBuilder.Entity<Sala>().HasQueryFilter(s => s.Activo);
+            modelBuilder.Entity<Cita>().HasQueryFilter(c => c.Activo);
+
             base.OnModelCreating(modelBuilder);
         }
     }

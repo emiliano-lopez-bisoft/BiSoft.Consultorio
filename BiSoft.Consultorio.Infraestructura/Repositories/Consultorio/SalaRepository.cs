@@ -37,7 +37,8 @@ namespace BiSoft.Consultorio.Infraestructura.Repositories.Consultorio
 
         public async Task EliminarSala(Sala sala)
         {
-            _context.Salas.Remove(sala);
+            sala.Desactivar();
+            _context.Salas.Update(sala);
         }
     }
 }

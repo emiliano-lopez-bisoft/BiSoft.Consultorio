@@ -23,6 +23,10 @@ namespace BiSoft.Consultorio.Infraestructura.Mapping.Consultorio.Sqlite
                 .HasColumnType("TEXT")
                 .IsRequired()
                 .HasMaxLength(100);
+            builder.Property(p => p.Activo)
+                .HasColumnName("activo")
+                .HasColumnType("INTEGER")
+                .IsRequired();
         }
     }
 }

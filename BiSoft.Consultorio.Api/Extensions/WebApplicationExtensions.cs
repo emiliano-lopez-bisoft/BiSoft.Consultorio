@@ -1,4 +1,5 @@
-﻿using BiSoft.Consultorio.Api.Endpoints.Doctores;
+﻿using BiSoft.Consultorio.Api.Endpoints.Citas;
+using BiSoft.Consultorio.Api.Endpoints.Doctores;
 using BiSoft.Consultorio.Api.Endpoints.Pacientes;
 using BiSoft.Consultorio.Api.Endpoints.Salas;
 using Microsoft.OpenApi;
@@ -13,6 +14,7 @@ namespace BiSoft.Consultorio.Api.Extensions
             apiEndpoints.MapDoctoresEndpoints();
             apiEndpoints.MapPacientesEndpoints();
             apiEndpoints.MapSalasEndpoints();
+            apiEndpoints.MapCitasEndpoints();
             //Linea añadida
             apiEndpoints.AddOpenApi();
             return app;

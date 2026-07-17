@@ -9,12 +9,13 @@ namespace BiSoft.Consultorio.Dominio.Entidades
         public Guid Id { get; set; }
         public DateTime Fecha { get; set; }
         public Guid PacienteId { get; set; }
+        public Paciente Paciente { get; set; }
         public Guid DoctorId { get; set; }
+        public Doctor Doctor { get; set; }
         public string Motivo { get; set; }
-        public string Diagnostico { get; set; }
         public Guid SalaId { get; set; }
         public Sala Sala { get; set; }
-
+        public bool Activo { get; private set; } = true;
         protected Cita() { }
 
         public Cita(DateTime fecha, Guid pacienteId, Guid doctorId, Guid salaId, string motivo)
@@ -26,5 +27,7 @@ namespace BiSoft.Consultorio.Dominio.Entidades
             Motivo = motivo;
             SalaId = salaId;
         }
+
+        public void Desactivar() { Activo = false; }
     }
 }

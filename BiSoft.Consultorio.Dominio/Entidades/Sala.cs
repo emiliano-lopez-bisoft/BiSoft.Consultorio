@@ -9,6 +9,7 @@ namespace BiSoft.Consultorio.Dominio.Entidades
     {
         public Guid Id { get; set; }
         public string Nombre { get; set; }
+        public bool Activo { get; private set; } = true;
 
         protected Sala() { }
         public Sala(string nombre)
@@ -21,5 +22,6 @@ namespace BiSoft.Consultorio.Dominio.Entidades
         {
             Nombre = nombre.ValidateEmpty("nombre");
         }
+        public void Desactivar() { Activo = false; }
     }
 }

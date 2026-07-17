@@ -38,7 +38,8 @@ namespace BiSoft.Consultorio.Infraestructura.Repositories.Consultorio
         //Eliminar doctor
         public async Task EliminarDoctor(Doctor doctor)
         {
-            _context.Doctores.Remove(doctor);
+            doctor.Desactivar();
+            _context.Doctores.Update(doctor);
         }
     }
 }

@@ -1,17 +1,26 @@
 using BiSoft.Consultorio.Api.Extensions;
+using BiSoft.Consultorio.Api.Extensions.Endpoints;
 using BiSoft.Consultorio.Api.Middlewares;
 using Serilog;
 
 namespace BiSoft.Consultorio.Api
 {
-    public class Program
+    public static class Program
     {
+        public const string RATE_LIMITER_POLICY_NAME = "Fixed";
+        public const string CORS_POLICY_NAME = "AllowAll";
         public static void Main(string[] args)
         {
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-                builder.Services.AddApplicationServices(builder.Configuration);
+                var rateLimiting = builder.Configuration.GetValue<int>("RateLimiting");
+                var connectionString = builder.Configuration["DataBaseConnections:Consultorio:ConnectionString"];
+                builder.Services.ConfigurarServicios(builder.Configuration)
+                                .ConfigurarSwagger()
+                                .ConfigurarCors()
+                                .ConfigurarHealthChecks(connectionString)
+                                .ConfigureRateLimiter(rateLimiting);
 
                 Log.Logger = new LoggerConfiguration()
                              .WriteTo.SQLite(
@@ -21,22 +30,6 @@ namespace BiSoft.Consultorio.Api
                              )
                              .CreateLogger();
                 //To do Agregar serilog
-
-                //OpenApi
-                builder.Services.AddEndpointsApiExplorer();
-                builder.Services.AddSwaggerGen();
-
-                // CORS
-                builder.Services.AddCors(options =>
-                {
-                    options.AddPolicy("AllowAll", policy =>
-                    {
-                        policy.AllowAnyOrigin()
-                              .AllowAnyMethod()
-                              .AllowAnyHeader();
-                    });
-                });
-
 
                 // Add services to the container.
                 builder.Services.AddAuthorization();
@@ -55,7 +48,7 @@ namespace BiSoft.Consultorio.Api
                 app.UseHttpsRedirection();
 
                 app.UseAuthorization();
-
+                app.AddHealthChecks(RATE_LIMITER_POLICY_NAME);
 
                 //CRUD DOCTOR y PACIENTE
                 app.MapEndpoints();
@@ -65,8 +58,9 @@ namespace BiSoft.Consultorio.Api
                 app.UseSwaggerUI();
 
                 //Cors 
-                app.UseCors("AllowAll");
+                app.UseCors(CORS_POLICY_NAME);
 
+                app.UseRateLimiter();
                 app.Run();
             }
             catch (Exception ex)
