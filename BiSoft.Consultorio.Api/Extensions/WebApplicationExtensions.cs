@@ -10,7 +10,9 @@ namespace BiSoft.Consultorio.Api.Extensions
     {
         public static WebApplication MapEndpoints(this WebApplication app)
         {
-            var apiEndpoints = app.MapGroup("api");
+            var apiEndpoints = app.MapGroup("api")
+                                  //.AddOpenApi()
+                                  .RequireRateLimiting(Program.RATE_LIMITER_POLICY_NAME);
             apiEndpoints.MapDoctoresEndpoints();
             apiEndpoints.MapPacientesEndpoints();
             apiEndpoints.MapSalasEndpoints();

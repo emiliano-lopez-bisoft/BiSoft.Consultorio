@@ -1,14 +1,19 @@
-﻿using BiSoft.Consultorio.Api.Helpers.HealthChecks;
+﻿using BiSoft.Consultorio.Api.DTOs.Configurations;
+using BiSoft.Consultorio.Api.Helpers.HealthChecks;
 using BiSoft.Consultorio.Aplicacion.Services;
 using BiSoft.Consultorio.Dominio.Repositories;
 using BiSoft.Consultorio.Dominio.Services;
 using BiSoft.Consultorio.Infraestructura.Contexts;
 using BiSoft.Consultorio.Infraestructura.Repositories.Consultorio;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Globalization;
+using System.Text;
 using System.Threading.RateLimiting;
 
 namespace BiSoft.Consultorio.Api.Extensions
@@ -88,6 +93,40 @@ namespace BiSoft.Consultorio.Api.Extensions
                     options.QueueLimit = 0;
                 });
             });
+            return services;
+        }
+
+        public static IServiceCollection ConfigureLogger(this IServiceCollection services)
+        {
+            Log.Logger = new LoggerConfiguration()
+                 .WriteTo.SQLite(
+                    sqliteDbPath: "Logs/Logs.db",
+                    tableName: "Logs",
+                    restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
+                 )
+                 .WriteTo.Console()
+                 .CreateLogger();
+            services.AddSerilog();
+            return services;
+        }
+
+        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, JwtConfigurations jwtConfiguration)
+        {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                    .AddJwtBearer(options =>
+                    {
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidateIssuer = true,
+                            ValidateAudience = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ValidIssuer = "your-issuer",
+                            ValidAudience = "your-audience",
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-secret-key")),
+                            ClockSkew = TimeSpan.Zero
+                        };
+                    });
             return services;
         }
     }

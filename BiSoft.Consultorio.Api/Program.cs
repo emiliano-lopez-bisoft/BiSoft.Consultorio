@@ -20,16 +20,8 @@ namespace BiSoft.Consultorio.Api
                                 .ConfigurarSwagger()
                                 .ConfigurarCors()
                                 .ConfigurarHealthChecks(connectionString)
-                                .ConfigureRateLimiter(rateLimiting);
-
-                Log.Logger = new LoggerConfiguration()
-                             .WriteTo.SQLite(
-                                sqliteDbPath: "Logs/Logs.db",
-                                tableName: "Logs",
-                                restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
-                             )
-                             .CreateLogger();
-                //To do Agregar serilog
+                                .ConfigureRateLimiter(rateLimiting)
+                                .ConfigureLogger();
 
                 // Add services to the container.
                 builder.Services.AddAuthorization();
@@ -58,9 +50,9 @@ namespace BiSoft.Consultorio.Api
                 app.UseSwaggerUI();
 
                 //Cors 
-                app.UseCors(CORS_POLICY_NAME);
+                //app.UseCors(CORS_POLICY_NAME);
 
-                app.UseRateLimiter();
+                //app.UseRateLimiter();
                 app.Run();
             }
             catch (Exception ex)
