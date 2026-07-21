@@ -9,12 +9,13 @@
             return salasGroup;
         }
 
-        public static RouteGroupBuilder MapEndpoints(this RouteGroupBuilder group)
+        private static RouteGroupBuilder MapEndpoints(this RouteGroupBuilder group)
         {
             group.MapConsultarSalaEndpoint()
                  .MapRegistrarSalaEndpoint()
                  .MapActualizarSalaEndpoint()
-                 .MapEliminarSalaEndpoint();
+                 .MapEliminarSalaEndpoint()
+                 .MapConsultarTodasLasSalasEndpoint();
             return group;
         }
     }

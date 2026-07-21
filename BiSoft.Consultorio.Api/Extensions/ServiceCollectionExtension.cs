@@ -1,10 +1,13 @@
 ﻿using BiSoft.Consultorio.Api.DTOs.Configurations;
 using BiSoft.Consultorio.Api.Helpers.HealthChecks;
+using BiSoft.Consultorio.Api.Helpers.Security;
 using BiSoft.Consultorio.Aplicacion.Services;
 using BiSoft.Consultorio.Dominio.Repositories;
+using BiSoft.Consultorio.Dominio.Seguridad;
 using BiSoft.Consultorio.Dominio.Services;
 using BiSoft.Consultorio.Infraestructura.Contexts;
 using BiSoft.Consultorio.Infraestructura.Repositories.Consultorio;
+using BiSoft.Consultorio.Infraestructura.Repositories.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
@@ -26,20 +29,25 @@ namespace BiSoft.Consultorio.Api.Extensions
             services.AddScoped<CitaService>();
             services.AddScoped<DoctorService>();
             services.AddScoped<PacienteService>();
+            services.AddScoped<UsuarioService>();
             services.AddScoped<SalaDomainService>();
             services.AddScoped<CitaDomainService>();
             services.AddScoped<DoctorDomainService>();
             services.AddScoped<PacienteDomainService>();
-            //services.AddScoped<CitaAvailabilityValidator>();
+            services.AddScoped<UsuarioDomainService>();
             services.AddScoped<ISalaRepository, SalaRepository>();
             services.AddScoped<ICitaRepository, CitaRepository>();
             services.AddScoped<IDoctorRepository, DoctorRepository>();
             services.AddScoped<IPacienteRepository, PacienteRepository>();
+            services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+            services.AddScoped<IPasswordHasher, PasswordHasher>();
             return services;
         }
-        public static IServiceCollection InyectarContextos(this IServiceCollection services, string connectionString)
+        public static IServiceCollection InyectarContextos(this IServiceCollection services, 
+            string consultorioConnectionString, string seguridadConnectionString)
         {
-            services.AddDbContext<ConsultorioContext>(options => options.UseSqlite(connectionString));
+            services.AddDbContext<SeguridadContext>(options => options.UseSqlite(seguridadConnectionString));
+            services.AddDbContext<ConsultorioContext>(options => options.UseSqlite(consultorioConnectionString));
             return services;
         }
         public static IServiceCollection ConfigurarSwagger(this IServiceCollection services)
@@ -61,11 +69,13 @@ namespace BiSoft.Consultorio.Api.Extensions
             });
             return services;
         }
-        public static IServiceCollection ConfigurarHealthChecks(this IServiceCollection services, string connectionString)
+        public static IServiceCollection ConfigurarHealthChecks(this IServiceCollection services, 
+            string consultorioConnectionString, string seguridadConnectionString)
         {
             services.AddHealthChecks()
                     .AddCheck("Liveness", () => HealthCheckResult.Healthy($"API iniciada correctamente"))
-                    .AddCheck("Database", new DataBaseHealthCheck(connectionString), tags: ["ready"]);
+                    .AddCheck("Database_Consultorio", new DataBaseHealthCheck(consultorioConnectionString), tags: ["ready"])
+                    .AddCheck("Database_Seguridad", new DataBaseHealthCheck(seguridadConnectionString), tags: ["ready"]);
             return services;
         }
         public static IServiceCollection ConfigureRateLimiter(this IServiceCollection services, int allowedRequestsPerMinute)
@@ -106,7 +116,7 @@ namespace BiSoft.Consultorio.Api.Extensions
             services.AddSerilog();
             return services;
         }
-        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, JwtConfigurations jwtConfigurations)
+        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, JwtConfiguration jwtConfig)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
@@ -117,9 +127,9 @@ namespace BiSoft.Consultorio.Api.Extensions
                             ValidateAudience = true,
                             ValidateLifetime = true,
                             ValidateIssuerSigningKey = true,
-                            ValidIssuer = "your-issuer",
-                            ValidAudience = "your-audience",
-                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("your-secret-key")),
+                            ValidIssuer = jwtConfig.Issuer,
+                            ValidAudience = jwtConfig.Audience,
+                            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfig.SecretKey)),
                             ClockSkew = TimeSpan.Zero
                         };
                     });

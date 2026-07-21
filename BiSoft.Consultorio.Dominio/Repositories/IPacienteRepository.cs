@@ -14,5 +14,6 @@ namespace BiSoft.Consultorio.Dominio.Repositories
         Task<Paciente?> ObtenerPaciente(Guid pacienteId);
         IQueryable<Paciente> ConsultarPacientes();
         Task EliminarPaciente(Paciente paciente);
+        Task<List<Paciente>> ObtenerTodosLosPacientes();
     }
 }

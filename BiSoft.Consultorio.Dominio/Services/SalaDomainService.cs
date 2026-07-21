@@ -19,6 +19,11 @@ namespace BiSoft.Consultorio.Dominio.Services
             _logger = logger;
             _salaRepository = salaRepository;
         }
+
+        public async Task<List<Sala>> ConsultarTodasLasSalas()
+        {
+            return await _salaRepository.ObtenerTodasLasSalas();
+        }
         public async Task<Sala> RegistrarSala(string nombre)
         {
             var sala = new Sala(nombre);

@@ -17,7 +17,8 @@ namespace BiSoft.Consultorio.Api.Endpoints.Citas
             group.MapConsultarCitaEndpoint()
                  .MapRegistrarCitaEndpoint()
                  .MapEliminarCitaEndpoint()
-                 .MapReagendarCitaEndpoint();
+                 .MapReagendarCitaEndpoint()
+                 .MapConsultarTodasLasCitasEndpoint();
             return group;
         }
     }

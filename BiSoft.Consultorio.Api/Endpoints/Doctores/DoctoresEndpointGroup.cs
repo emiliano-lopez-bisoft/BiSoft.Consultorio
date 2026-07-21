@@ -14,7 +14,8 @@
             group.MapConsultarDoctorEndpoint()
                  .MapRegistrarDoctorEndpoint()
                  .MapActualizarDoctorEndpoint()
-                 .MapEliminarDoctorEndpoint();
+                 .MapEliminarDoctorEndpoint()
+                 .MapConsultarTodosLosDoctoresEndpoint();
             return group;
         }
     }

@@ -1,3 +1,4 @@
+using BiSoft.Consultorio.Api.DTOs.Configurations;
 using BiSoft.Consultorio.Api.Extensions;
 using BiSoft.Consultorio.Api.Extensions.Endpoints;
 using BiSoft.Consultorio.Api.Middlewares;
@@ -14,17 +15,18 @@ namespace BiSoft.Consultorio.Api
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
-                var rateLimiting = builder.Configuration.GetValue<int>("RateLimiting");
-                var connectionString = builder.Configuration["DatabaseConnections:Consultorio:ConnectionString"];
+                var configuration = builder.Configuration.GetGeneralConfigurations();
 
-                // Inyeccion de servicios
+                // Inyeccion de Servicios
+                builder.Services.AddSingleton(configuration.JWT);
                 builder.Services.InyectarServicios()
-                                .InyectarContextos(connectionString)
+                                .InyectarContextos(configuration.ConsultorioConnectionString, configuration.SeguridadConnectionString)
                                 .ConfigurarSwagger()
                                 .ConfigurarCors()
-                                .ConfigurarHealthChecks(connectionString)
-                                .ConfigureRateLimiter(rateLimiting)
-                                .ContigureLogger();
+                                .ConfigurarHealthChecks(configuration.ConsultorioConnectionString, configuration.SeguridadConnectionString)
+                                .ConfigureRateLimiter(configuration.RateLimit)
+                                .ContigureLogger()
+                                .ConfigureAuthentication(configuration.JWT);
 
                 // Add services to the container.
                 builder.Services.AddAuthorization();
@@ -33,18 +35,19 @@ namespace BiSoft.Consultorio.Api
                 builder.Services.AddOpenApi();
 
                 var app = builder.Build();
-
+                // CORS
+                app.UseCors(CORS_POLICY_NAME);
+                app.UseRateLimiter();
+                app.UseAuthentication();
+                app.UseAuthorization();
+                app.UseMiddleware<ErrorHandlerMiddleware>();
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
                 {
                     app.MapOpenApi();
                 }
 
-                app.UseMiddleware<ErrorHandlerMiddleware>();
-
                 app.UseHttpsRedirection();
-
-                app.UseAuthorization();
 
                 app.AddHealthChecks(RATE_LIMITER_POLICY_NAME);
 
@@ -52,12 +55,8 @@ namespace BiSoft.Consultorio.Api
 
                 // OpenApi
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI();              
 
-                // CORS
-                app.UseCors(CORS_POLICY_NAME);
-
-                app.UseRateLimiter();
 
                 app.Run();
             }

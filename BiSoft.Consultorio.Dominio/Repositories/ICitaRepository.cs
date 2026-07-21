@@ -14,5 +14,6 @@ namespace BiSoft.Consultorio.Dominio.Repositories
         Task<Cita?> ObtenerCita(Guid citaId);
         IQueryable<Cita> ConsultarCitas();
         Task EliminarCita(Cita cita);
+        Task<List<Cita>> ObtenerTodasLasCitas();
     }
 }

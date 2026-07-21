@@ -18,6 +18,11 @@ namespace BiSoft.Consultorio.Dominio.Services
             _logger = logger;
             _doctorRepository = doctorRepository;
         }
+
+        public async Task<List<Doctor>> ConsultarTodosLosDoctores()
+        {
+            return await _doctorRepository.ObtenerTodosLosDoctores();
+        }
         public async Task<Doctor> RegistrarDoctor(string nombre, string especialidad)
         {
             var doctor = new Doctor(nombre, especialidad);

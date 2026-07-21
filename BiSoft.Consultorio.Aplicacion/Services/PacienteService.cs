@@ -1,5 +1,4 @@
-﻿using BiSoft.Consultorio.Aplicacion.DTOs.Doctor;
-using BiSoft.Consultorio.Aplicacion.DTOs.Paciente;
+﻿using BiSoft.Consultorio.Aplicacion.DTOs.Paciente;
 using BiSoft.Consultorio.Dominio.Entidades;
 using BiSoft.Consultorio.Dominio.Services;
 using Mapster;
@@ -21,6 +20,11 @@ namespace BiSoft.Consultorio.Aplicacion.Services
             _pacienteDomainService = pacienteDomainService;
         }
 
+        public async Task<List<ConsultarPacienteResponse>> ConsultarTodosLosPacientes()
+        {
+            var pacientes = await _pacienteDomainService.ConsultarTodosLosPacientes();
+            return pacientes.Adapt<List<ConsultarPacienteResponse>>();
+        }
         public async Task<Paciente> RegistrarPaciente(string nombre)
         {
             var paciente = await _pacienteDomainService.RegistrarPaciente(nombre);

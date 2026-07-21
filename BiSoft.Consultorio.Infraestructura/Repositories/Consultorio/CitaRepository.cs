@@ -17,6 +17,16 @@ namespace BiSoft.Consultorio.Infraestructura.Repositories.Consultorio
             _context = context;
         }
 
+        public async Task<List<Cita>> ObtenerTodasLasCitas()
+        {
+            return await _context.Citas
+                .Include(c => c.Doctor)
+                .Include(c => c.Paciente)
+                .Include(c => c.Sala)
+                .Where(c => c.Activo)
+                .ToListAsync();
+        }
+
         public async Task<Cita?> ObtenerCita(Guid citaId)
         {
             return await _context.Citas

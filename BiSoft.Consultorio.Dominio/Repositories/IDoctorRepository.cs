@@ -14,5 +14,6 @@ namespace BiSoft.Consultorio.Dominio.Repositories
         Task<Doctor?> ObtenerDoctor(Guid doctorId);
         IQueryable<Doctor> ConsultarDoctores();
         Task EliminarDoctor(Doctor doctor);
+        Task<List<Doctor>> ObtenerTodosLosDoctores();
     }
 }

@@ -20,6 +20,11 @@ namespace BiSoft.Consultorio.Aplicacion.Services
             _citaDomainService = citaDomainService;
         }
 
+        public async Task<List<ConsultarCitaResponse>> ConsultarTodasLasCitas()
+        {
+            var citas = await _citaDomainService.ConsultarTodasLasCitas();
+            return citas.Adapt<List<ConsultarCitaResponse>>();
+        }
         public async Task<Cita> RegistrarCita(DateTime fecha, Guid pacienteId, Guid doctorId, Guid salaId, string motivo)
         {
             var cita = await _citaDomainService.RegistrarCita(fecha, pacienteId, doctorId, salaId, motivo);

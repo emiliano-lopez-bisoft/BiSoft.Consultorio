@@ -20,6 +20,11 @@ namespace BiSoft.Consultorio.Aplicacion.Services
             _doctorDomainService = doctorDomainService;
         }
 
+        public async Task<List<ConsultarDoctorResponse>> ConsultarTodosLosDoctores()
+        {
+            var doctores = await _doctorDomainService.ConsultarTodosLosDoctores();
+            return doctores.Adapt<List<ConsultarDoctorResponse>>();
+        }
         public async Task<Doctor> RegistrarDoctor(string nombre, string especialidad)
         {
             var doctor = await _doctorDomainService.RegistrarDoctor(nombre, especialidad);

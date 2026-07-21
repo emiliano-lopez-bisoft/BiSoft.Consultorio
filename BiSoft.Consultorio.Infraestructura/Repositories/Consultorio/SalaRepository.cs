@@ -15,6 +15,13 @@ namespace BiSoft.Consultorio.Infraestructura.Repositories.Consultorio
         {
             _context = context;
         }
+
+        public async Task<List<Sala>> ObtenerTodasLasSalas()
+        {
+            return await _context.Salas
+                .Where(d => d.Activo)
+                .ToListAsync();
+        }
         public async Task<Sala?> ObtenerSala(Guid salaId)
         {
             return await _context.Salas.OrderBy(d => d.Id).FirstOrDefaultAsync(d => d.Id == salaId);

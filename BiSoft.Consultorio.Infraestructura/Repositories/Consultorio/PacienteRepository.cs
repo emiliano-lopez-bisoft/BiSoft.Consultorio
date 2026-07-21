@@ -15,6 +15,13 @@ namespace BiSoft.Consultorio.Infraestructura.Repositories.Consultorio
         {
             _context = context;
         }
+
+        public async Task<List<Paciente>> ObtenerTodosLosPacientes()
+        {
+            return await _context.Pacientes
+                .Where(p => p.Activo)
+                .ToListAsync();
+        }
         public async Task<Paciente?> ObtenerPaciente(Guid pacienteId)
         {
             return await _context.Pacientes.OrderBy(d => d.Id).FirstOrDefaultAsync(d => d.Id == pacienteId);

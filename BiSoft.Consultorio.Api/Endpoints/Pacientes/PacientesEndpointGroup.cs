@@ -9,12 +9,13 @@
             return pacientesGroup;
         }
 
-        public static RouteGroupBuilder MapEndpoints(this RouteGroupBuilder group)
+        private static RouteGroupBuilder MapEndpoints(this RouteGroupBuilder group)
         {
             group.MapConsultarPacienteEndpoint()
                  .MapRegistrarPacienteEndpoint()
                  .MapActualizarPacienteEndpoint()
-                 .MapEliminarPacienteEndpoint();
+                 .MapEliminarPacienteEndpoint()
+                 .MapConsultarTodosLosPacientesEndpoint();
             return group;
         }
     }

@@ -20,6 +20,12 @@ namespace BiSoft.Consultorio.Aplicacion.Services
             _salaDomainService = salaDomainService;
         }
 
+        public async Task<List<ConsultarSalaResponse>> ConsultarTodasLasSalas()
+        {
+            var salas = await _salaDomainService.ConsultarTodasLasSalas();
+            return salas.Adapt<List<ConsultarSalaResponse>>();
+        }
+
         public async Task<Sala> RegistrarSala(string nombre)
         {
             var sala = await _salaDomainService.RegistrarSala(nombre);

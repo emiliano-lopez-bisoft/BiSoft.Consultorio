@@ -14,5 +14,6 @@ namespace BiSoft.Consultorio.Dominio.Repositories
         Task<Sala?> ObtenerSala(Guid salaId);
         IQueryable<Sala> ConsultarSalas();
         Task EliminarSala(Sala sala);
+        Task<List<Sala>> ObtenerTodasLasSalas();
     }
 }

@@ -20,6 +20,10 @@ namespace BiSoft.Consultorio.Dominio.Services
             _citaRepository = citaRepository;
         }
 
+        public async Task<List<Cita>> ConsultarTodasLasCitas()
+        {
+            return await _citaRepository.ObtenerTodasLasCitas();
+        }
         public async Task<Cita> RegistrarCita(DateTime fecha, Guid pacienteId, Guid doctorId, Guid salaId, string motivo)
         {
             // 1. Extraemos las citas de ese mismo día para validar empalmes
