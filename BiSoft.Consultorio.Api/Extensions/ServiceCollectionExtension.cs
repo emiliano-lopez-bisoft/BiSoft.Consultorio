@@ -20,36 +20,34 @@ namespace BiSoft.Consultorio.Api.Extensions
 {
     public static class ServiceCollectionExtension
     {
-        public static IServiceCollection ConfigurarServicios(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection InyectarServicios(this IServiceCollection services)
         {
-            var connectionString = configuration["DataBaseConnections:Consultorio:ConnectionString"];
-
-            services.AddScoped<DoctorService>();
-            services.AddScoped<PacienteService>();
             services.AddScoped<SalaService>();
             services.AddScoped<CitaService>();
-            services.AddScoped<DoctorDomainService>();
-            services.AddScoped<PacienteDomainService>();
+            services.AddScoped<DoctorService>();
+            services.AddScoped<PacienteService>();
             services.AddScoped<SalaDomainService>();
             services.AddScoped<CitaDomainService>();
-            services.AddScoped<IDoctorRepository, DoctorRepository>();
-            services.AddScoped<IPacienteRepository, PacienteRepository>();
+            services.AddScoped<DoctorDomainService>();
+            services.AddScoped<PacienteDomainService>();
+            //services.AddScoped<CitaAvailabilityValidator>();
             services.AddScoped<ISalaRepository, SalaRepository>();
             services.AddScoped<ICitaRepository, CitaRepository>();
-            services.AddDbContext<ConsultorioContext>(
-                options => options.UseSqlite(connectionString)
-            );
-
+            services.AddScoped<IDoctorRepository, DoctorRepository>();
+            services.AddScoped<IPacienteRepository, PacienteRepository>();
             return services;
         }
-
+        public static IServiceCollection InyectarContextos(this IServiceCollection services, string connectionString)
+        {
+            services.AddDbContext<ConsultorioContext>(options => options.UseSqlite(connectionString));
+            return services;
+        }
         public static IServiceCollection ConfigurarSwagger(this IServiceCollection services)
         {
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
             return services;
         }
-
         public static IServiceCollection ConfigurarCors(this IServiceCollection services)
         {
             services.AddCors(options =>
@@ -82,7 +80,7 @@ namespace BiSoft.Consultorio.Api.Extensions
                             ((int)retryAfter.TotalSeconds).ToString(NumberFormatInfo.InvariantInfo);
                     }
                     context.HttpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-                    context.HttpContext.Response.WriteAsync("Demasiados requests. Intente más tarde.", cancellationToken: ct);
+                    context.HttpContext.Response.WriteAsync("Demasiados request. Intente más tarde", cancellationToken: ct);
                     return new ValueTask();
                 };
                 config.AddFixedWindowLimiter(Program.RATE_LIMITER_POLICY_NAME, options =>
@@ -95,22 +93,20 @@ namespace BiSoft.Consultorio.Api.Extensions
             });
             return services;
         }
-
-        public static IServiceCollection ConfigureLogger(this IServiceCollection services)
+        public static IServiceCollection ContigureLogger(this IServiceCollection services)
         {
             Log.Logger = new LoggerConfiguration()
-                 .WriteTo.SQLite(
+                .WriteTo.SQLite(
                     sqliteDbPath: "Logs/Logs.db",
                     tableName: "Logs",
                     restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information
-                 )
-                 .WriteTo.Console()
-                 .CreateLogger();
+                )
+                .WriteTo.Console()
+                .CreateLogger();
             services.AddSerilog();
             return services;
         }
-
-        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, JwtConfigurations jwtConfiguration)
+        public static IServiceCollection ConfigureAuthentication(this IServiceCollection services, JwtConfigurations jwtConfigurations)
         {
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>

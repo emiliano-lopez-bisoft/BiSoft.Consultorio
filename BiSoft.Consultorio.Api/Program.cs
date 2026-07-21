@@ -8,20 +8,23 @@ namespace BiSoft.Consultorio.Api
     public static class Program
     {
         public const string RATE_LIMITER_POLICY_NAME = "Fixed";
-        public const string CORS_POLICY_NAME = "AllowAll";
+        public const string CORS_POLICY_NAME = "allowAll";
         public static void Main(string[] args)
         {
             try
             {
                 var builder = WebApplication.CreateBuilder(args);
                 var rateLimiting = builder.Configuration.GetValue<int>("RateLimiting");
-                var connectionString = builder.Configuration["DataBaseConnections:Consultorio:ConnectionString"];
-                builder.Services.ConfigurarServicios(builder.Configuration)
+                var connectionString = builder.Configuration["DatabaseConnections:Consultorio:ConnectionString"];
+
+                // Inyeccion de servicios
+                builder.Services.InyectarServicios()
+                                .InyectarContextos(connectionString)
                                 .ConfigurarSwagger()
                                 .ConfigurarCors()
                                 .ConfigurarHealthChecks(connectionString)
                                 .ConfigureRateLimiter(rateLimiting)
-                                .ConfigureLogger();
+                                .ContigureLogger();
 
                 // Add services to the container.
                 builder.Services.AddAuthorization();
@@ -36,28 +39,31 @@ namespace BiSoft.Consultorio.Api
                 {
                     app.MapOpenApi();
                 }
+
                 app.UseMiddleware<ErrorHandlerMiddleware>();
+
                 app.UseHttpsRedirection();
 
                 app.UseAuthorization();
+
                 app.AddHealthChecks(RATE_LIMITER_POLICY_NAME);
 
-                //CRUD DOCTOR y PACIENTE
                 app.MapEndpoints();
 
-                //OpenApi
+                // OpenApi
                 app.UseSwagger();
                 app.UseSwaggerUI();
 
-                //Cors 
-                //app.UseCors(CORS_POLICY_NAME);
+                // CORS
+                app.UseCors(CORS_POLICY_NAME);
 
-                //app.UseRateLimiter();
+                app.UseRateLimiter();
+
                 app.Run();
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Aplication start-up failed {ex.Message}");
+                Console.WriteLine($"Application start-up failed: {ex.Message}");
                 Console.ReadKey();
                 Environment.Exit(1);
             }
